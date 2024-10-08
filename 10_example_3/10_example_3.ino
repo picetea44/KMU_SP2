@@ -11,7 +11,7 @@
 #define PIN_SERVO 10
 
 Servo myServo;
-unsigned long MOVING_TIME = 3200000; // moving time is 3 seconds
+unsigned long MOVING_TIME = 1000; // moving time is 3 seconds
 unsigned long moveStartTime;
 int startAngle = 0; // 30°
 int stopAngle  = 180; // 90°
