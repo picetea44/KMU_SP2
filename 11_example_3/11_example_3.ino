@@ -76,15 +76,14 @@ void loop() {
   int servo_duty = 0;
   
   if (dist_ema <= _DIST_MIN) {
-    servo_duty = _DUTY_MIN;  // 18cm 이하일 경우 서보를 0도로 설정
+    servo_duty = _DUTY_MIN;  // 18cm 이하 0
   } else if (dist_ema >= _DIST_MAX) {
-    servo_duty = _DUTY_MAX;  // 36cm 이상일 경우 서보를 180도로 설정
+    servo_duty = _DUTY_MAX;  // 36cm 이상일 경우 180도
   } else {
-    // 18~36cm 사이일 경우 거리에 비례하여 서보 펄스 폭 변경
+    // 18~36cm 사이일 경우 거리에 비례하게
     servo_duty = map(dist_ema, _DIST_MIN, _DIST_MAX, _DUTY_MIN, _DUTY_MAX);
   }
   
-  // 서보 모터에 펄스 폭 적용
   myservo.writeMicroseconds(servo_duty);
 
   // output the distance to the serial port
