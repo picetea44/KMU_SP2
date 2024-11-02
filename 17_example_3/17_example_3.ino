@@ -6,16 +6,16 @@
 #define PIN_LED   9
 #define PIN_SERVO 10
 
-#define _DUTY_MIN 453  // servo full clock-wise position (0 degree)
+#define _DUTY_MIN 553  // servo full clock-wise position (0 degree)
 #define _DUTY_NEU 1476  // servo neutral position (90 degree)
-#define _DUTY_MAX 2499  // servo full counter-clockwise position (180 degree)
+#define _DUTY_MAX 2399  // servo full counter-clockwise position (180 degree)
 
 #define _DIST_MIN  100.0   // minimum distance 100mm
 #define _DIST_MAX  250.0   // maximum distance 250mm
 
-#define EMA_ALPHA  0.5      // for EMA Filter
+#define EMA_ALPHA  0.2      // for EMA Filter
 
-#define LOOP_INTERVAL 50   // Loop Interval (unit: msec)
+#define LOOP_INTERVAL 20   // Loop Interval (unit: msec)
 
 Servo myservo;
 unsigned long last_loop_time;   // unit: msec
@@ -59,23 +59,8 @@ void loop()
   }
 
   dist_ema = EMA_ALPHA * dist_raw + (1 - EMA_ALPHA) * dist_ema;
-  if(dist_ema <= 100.0) {
-     myservo.writeMicroseconds(_DUTY_MIN);
-     analogWrite(PIN_LED, 255);
-  }
-  else if(dist_ema > 100.0 && dist_ema < 250.0){
-    double i = (dist_ema - 180)*10.25;
-    duty = i + 553;
-    myservo.writeMicroseconds(duty);
-    analogWrite(PIN_LED, 0);
-    
-  }
-  else {
-    myservo.writeMicroseconds(_DUTY_MAX);
-    analogWrite(PIN_LED, 255);
-  }
-  //duty = map(dist_ema, _DIST_MIN, _DIST_MAX, _DUTY_MIN, _DUTY_MAX);
-  //duty = // Put map() equivalent code here
+  
+  duty = (_DUTY_MAX - _DUTY_MIN) * (dist_ema - _DIST_MIN) / (_DIST_MAX - _DIST_MIN) + _DUTY_MIN; 
   
   myservo.writeMicroseconds(duty);
 
