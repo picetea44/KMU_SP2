@@ -6,27 +6,27 @@
 #define PIN_IR    A0
 
 // Event interval parameters
-#define _INTERVAL_DIST    20 // distance sensor interval (unit: ms)
-#define _INTERVAL_SERVO   20 // servo interval (unit: ms)
-#define _INTERVAL_SERIAL  20 // serial interval (unit: ms)
+#define _INTERVAL_DIST    30 // distance sensor interval (unit: ms)
+#define _INTERVAL_SERVO   30 // servo interval (unit: ms)
+#define _INTERVAL_SERIAL  30 // serial interval (unit: ms)
 
 // EMA filter configuration for the IR distance sensor
-#define _EMA_ALPHA 0.375    // EMA weight of new sample (range: 0 to 1)
+#define _EMA_ALPHA 0.7    // EMA weight of new sample (range: 0 to 1)
                           // Setting EMA to 1 effectively disables EMA filter.
 
 // Servo adjustment - Set _DUTY_MAX, _NEU, _MIN with your own numbers
-#define _DUTY_MAX 2400 // 2000
-#define _DUTY_NEU 1750 // 1500
-#define _DUTY_MIN  900 // 1000
+#define _DUTY_MAX 1900 // 2000
+#define _DUTY_NEU 1630 // 1500
+#define _DUTY_MIN 900 // 1000
 
-#define _SERVO_ANGLE_DIFF  90   // Replace with |D - E| degree
-#define _SERVO_SPEED       1300   // servo speed 
+#define _SERVO_ANGLE_DIFF  60   // Replace with |D - E| degree
+#define _SERVO_SPEED       1000   // servo speed 
 
 // Target Distance
 #define _DIST_TARGET    155 // Center of the rail (unit: mm)
 
 // PID parameters
-#define _KP  4.0    // proportional gain
+#define _KP  4.5   // proportional gain
 //#define _KD 0.0   // derivative gain
 //#define _KI 0.0   // integral gain
 
