@@ -6,29 +6,29 @@
 #define PIN_IR    A0
 
 // Event interval parameters
-#define _INTERVAL_DIST    30 // distance sensor interval (unit: ms)
-#define _INTERVAL_SERVO   30 // servo interval (unit: ms)
-#define _INTERVAL_SERIAL  30 // serial interval (unit: ms)
+#define _INTERVAL_DIST    20 // distance sensor interval (unit: ms)
+#define _INTERVAL_SERVO   20 // servo interval (unit: ms)
+#define _INTERVAL_SERIAL  20 // serial interval (unit: ms)
 
 // EMA filter configuration for the IR distance sensor
-#define _EMA_ALPHA 0.7    // EMA weight of new sample (range: 0 to 1)
+#define _EMA_ALPHA 0.3    // EMA weight of new sample (range: 0 to 1)
                           // Setting EMA to 1 effectively disables EMA filter.
 
 // Servo adjustment - Set _DUTY_MAX, _NEU, _MIN with your own numbers
 #define _DUTY_MAX 1900 // 2000
 #define _DUTY_NEU 1630 // 1500
-#define _DUTY_MIN 900 // 1000
+#define _DUTY_MIN 950 // 1000
 
-#define _SERVO_ANGLE_DIFF  60   // Replace with |D - E| degree
-#define _SERVO_SPEED       1000   // servo speed 
+#define _SERVO_ANGLE_DIFF  70    // Replace with |D - E| degree
+#define _SERVO_SPEED       100  // servo speed 
 
-// Target Distance
-#define _DIST_TARGET    155 // Center of the rail (unit: mm)
+// Target Distance : not important in D-only control
+#define _DIST_TARGET    175 // Center of the rail (unit:mm)
 
 // PID parameters
-#define _KP  4.2   // proportional gain
-//#define _KD 0.0   // derivative gain
-//#define _KI 0.0   // integral gain
+//#define _KP  0.0   // proportional gain
+#define _KD 1500      // derivative gain
+//#define _KI 0.0    // integral gain
 
 // global variables
 
@@ -45,8 +45,8 @@ int duty_change_per_interval;     // maximum duty difference per interval
 // Servo position
 int duty_target, duty_current;
 
-int error_current;
-float pterm /*, dterm, iterm */;
+int error_current, error_prev;
+float /* pterm, */ dterm /*, iterm */;
 
 void setup()
 {
@@ -90,14 +90,18 @@ void loop()
     event_dist = false;
 
     // get a distance reading from the distance sensor
-    dist_filtered = volt_to_distance(ir_sensor_filtered(10, 0.5, 0));
+    dist_filtered = volt_to_distance(ir_sensor_filtered(20, 0.5, 0));
     dist_ema = _EMA_ALPHA * dist_filtered + (1.0 - _EMA_ALPHA) * dist_ema;
 
     // Update PID variables
     error_current = _DIST_TARGET - dist_ema;
-    pterm = _KP*error_current;
+    // pterm here
+    dterm = _KD * error_current;
+    // iterm here
     
-    control = pterm /* + dterm + iterm */;
+    control = /* pterm + */ dterm /* + iterm */;
+    error_prev = error_current;
+        
     duty_target = _DUTY_NEU + control;
 
     // Limit duty_target within the range of [_DUTY_MIN, _DUTY_MAX]
@@ -132,20 +136,26 @@ void loop()
   if (event_serial) {
     event_serial = false;
 
-    Serial.print("DIST:");
-    Serial.print(dist_ema);
-    Serial.print(",_DIST_TARGET:"),
-    Serial.print(_DIST_TARGET);
-    Serial.print(",ERROR:");
-    Serial.print(error_current);
-    Serial.print(",duty_target:");
-    Serial.print(duty_target);
-    Serial.print(",duty_current:");
-    Serial.print(duty_current);  
-    Serial.print(",("); 
-    Serial.print(duty_change_per_interval); 
-    Serial.print("),pterm:");
-    Serial.println(pterm);
+    if (0) { // for debugging
+      Serial.print("DIST:");
+      Serial.print(dist_ema);
+      Serial.print(",_DIST_TARGET:");
+      Serial.print(_DIST_TARGET);
+      Serial.print(",ERROR:");
+      Serial.print(error_current);
+      Serial.print(",duty_target:");
+      Serial.print(duty_target);
+      Serial.print(",duty_current:");
+      Serial.print(duty_current);  
+      Serial.print(",("); 
+      Serial.print(duty_change_per_interval); 
+      Serial.print("),dterm:");
+      Serial.println(dterm);
+    } else {  // For evaluation
+      Serial.print("MIN:0,MAX:300");
+      Serial.print(",DIST:");
+      Serial.println(dist_ema);  
+    }
   }
 }
 
@@ -153,7 +163,7 @@ float volt_to_distance(int x)
 {
   // Replace next line into your own equation
   // return (6762.0 / (a_value - 9) - 4.0) * 10.0; 
-  return 877 + -4.29*x + 7.48E-03*x*x + -4.55E-06*x*x*x;
+  return 701 + -3.18 * x + 5.13E-03 * x*x + -2.93E-06*x*x*x;
 }
 
 int compare(const void *a, const void *b) {
