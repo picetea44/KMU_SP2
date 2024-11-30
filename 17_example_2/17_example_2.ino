@@ -5,9 +5,9 @@
 #define PIN_POTENTIOMETER 3   // Potentiometer at Pin A3
 #define PIN_SERVO         10
 
-#define _DUTY_MIN 453 // servo full clock-wise position (0 degree)
-#define _DUTY_NEU 1476 // servo neutral position (90 degree)
-#define _DUTY_MAX 2499 // servo full counter-clockwise position (180 degree)
+#define _DUTY_MIN 550 // servo full clock-wise position (0 degree)
+#define _DUTY_NEU 1475 // servo neutral position (90 degree)
+#define _DUTY_MAX 2400 // servo full counter-clockwise position (180 degree)
 
 #define LOOP_INTERVAL 50   // Loop Interval (unit: msec)
 

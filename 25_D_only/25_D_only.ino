@@ -11,23 +11,23 @@
 #define _INTERVAL_SERIAL  20 // serial interval (unit: ms)
 
 // EMA filter configuration for the IR distance sensor
-#define _EMA_ALPHA 0.3    // EMA weight of new sample (range: 0 to 1)
+#define _EMA_ALPHA 0.1    // EMA weight of new sample (range: 0 to 1)
                           // Setting EMA to 1 effectively disables EMA filter.
 
 // Servo adjustment - Set _DUTY_MAX, _NEU, _MIN with your own numbers
-#define _DUTY_MAX 1900 // 2000
-#define _DUTY_NEU 1630 // 1500
-#define _DUTY_MIN 950 // 1000
+#define _DUTY_MAX 2400
+#define _DUTY_NEU 1475
+#define _DUTY_MIN 550
 
-#define _SERVO_ANGLE_DIFF  70    // Replace with |D - E| degree
-#define _SERVO_SPEED       100  // servo speed 
+#define _SERVO_ANGLE_DIFF  168    // Replace with |D - E| degree
+#define _SERVO_SPEED       200  // servo speed 
 
 // Target Distance : not important in D-only control
 #define _DIST_TARGET    175 // Center of the rail (unit:mm)
 
 // PID parameters
 //#define _KP  0.0   // proportional gain
-#define _KD 1500      // derivative gain
+#define _KD 250     // derivative gain
 //#define _KI 0.0    // integral gain
 
 // global variables
@@ -90,13 +90,13 @@ void loop()
     event_dist = false;
 
     // get a distance reading from the distance sensor
-    dist_filtered = volt_to_distance(ir_sensor_filtered(20, 0.5, 0));
+    dist_filtered = volt_to_distance(ir_sensor_filtered(5, 0.5, 0));
     dist_ema = _EMA_ALPHA * dist_filtered + (1.0 - _EMA_ALPHA) * dist_ema;
 
     // Update PID variables
     error_current = _DIST_TARGET - dist_ema;
     // pterm here
-    dterm = _KD * error_current;
+    dterm = _KD * (error_current - error_prev);
     // iterm here
     
     control = /* pterm + */ dterm /* + iterm */;
@@ -163,7 +163,7 @@ float volt_to_distance(int x)
 {
   // Replace next line into your own equation
   // return (6762.0 / (a_value - 9) - 4.0) * 10.0; 
-  return 701 + -3.18 * x + 5.13E-03 * x*x + -2.93E-06*x*x*x;
+  return 877 + -4.29*x + 7.48E-03*x*x + -4.55E-06*x*x*x;
 }
 
 int compare(const void *a, const void *b) {

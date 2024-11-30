@@ -6,9 +6,9 @@
 #define PIN_LED   9
 #define PIN_SERVO 10
 
-#define _DUTY_MIN 553  // servo full clock-wise position (0 degree)
-#define _DUTY_NEU 1476  // servo neutral position (90 degree)
-#define _DUTY_MAX 2399  // servo full counter-clockwise position (180 degree)
+#define _DUTY_MIN 550  // servo full clock-wise position (0 degree)
+#define _DUTY_NEU 1475  // servo neutral position (90 degree)
+#define _DUTY_MAX 2400  // servo full counter-clockwise position (180 degree)
 
 #define _DIST_MIN  100.0   // minimum distance 100mm
 #define _DIST_MAX  250.0   // maximum distance 250mm

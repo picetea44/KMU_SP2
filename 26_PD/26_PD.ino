@@ -6,28 +6,28 @@
 #define PIN_IR    A0
 
 // Event interval parameters
-#define _INTERVAL_DIST    ??? // distance sensor interval (unit: ms)
-#define _INTERVAL_SERVO   ??? // servo interval (unit: ms)
+#define _INTERVAL_DIST    20 // distance sensor interval (unit: ms)
+#define _INTERVAL_SERVO   20 // servo interval (unit: ms)
 #define _INTERVAL_SERIAL  80  // serial interval (unit: ms)
 
 // EMA filter configuration for the IR distance sensor
-#define _EMA_ALPHA ???    // EMA weight of new sample (range: 0 to 1)
+#define _EMA_ALPHA 0.1    // EMA weight of new sample (range: 0 to 1)
                           // Setting EMA to 1 effectively disables EMA filter
 
 // Servo adjustment - Set _DUTY_MAX, _NEU, _MIN with your own numbers
-#define _DUTY_MAX ??? // 2000
-#define _DUTY_NEU ??? // 1500
-#define _DUTY_MIN ??? // 1000
+#define _DUTY_MAX 2400 // between 2385-2400 
+#define _DUTY_NEU 1475
+#define _DUTY_MIN 550 
 
-#define _SERVO_ANGLE_DIFF  ???  // Replace with |D - E| degree
-#define _SERVO_SPEED       ???  // servo speed 
+#define _SERVO_ANGLE_DIFF  165  // between 168-169
+#define _SERVO_SPEED       300  // servo speed 
 
 // Target Distance
-#define _DIST_TARGET    175 // Center of the rail (unit:mm)
+#define _DIST_TARGET    155 // Center of the rail (unit:mm)
 
 // PID parameters
-#define _KP ???  // proportional gain
-#define _KD ???  // derivative gain
+#define _KP 4.2  // proportional gain
+#define _KD 250  // derivative gain
 //#define _KI 0.0   // integral gain
 
 // global variables
@@ -65,7 +65,7 @@ void setup() {
   // initialize serial port
   Serial.begin(1000000);
 
-  dist_ema = volt_to_distance(ir_sensor_filtered(???, ???, 0));
+  dist_ema = volt_to_distance(ir_sensor_filtered(5, 0.5, 0));
   error_current = error_prev = _DIST_TARGET - dist_ema;
 }
   
@@ -93,7 +93,7 @@ void loop() {
     event_dist = false;
 
     // get a distance reading from the distance sensor
-    dist_filtered = volt_to_distance(ir_sensor_filtered(???, ???, 0));
+    dist_filtered = volt_to_distance(ir_sensor_filtered(5, 0.5, 0));
     dist_ema = _EMA_ALPHA * dist_filtered + (1.0 - _EMA_ALPHA) * dist_ema;
 
    // PID control logic
@@ -143,16 +143,16 @@ void loop() {
       Serial.print(",duty_target:"); Serial.print(duty_target);
       Serial.print(",duty_current:"); Serial.print(duty_current);
     }
-    Serial.print("MIN:0,MAX:300,TARGET:175,TG_LO:148,TG_HI:202,DIST:"); 
+    Serial.print("MIN:0,MAX:300,TARGET:155,TG_LO:128,TG_HI:182,DIST:"); 
     Serial.println(dist_ema);
   }
 }
 
-float volt_to_distance(int a_value)
+float volt_to_distance(int x)
 {
   // Replace next line into your own equation
-  // return (6762.0 / (a_value - 9) - 4.0) * 10.0; 
-  return ???;
+  return 701 + -3.18*x + 5.13E-03*x*x + -2.93E-06*x*x*x; 
+  //return 877 + -4.29*x + 7.48E-03*x*x + -4.55E-06*x*x*x;
 }
 
 int compare(const void *a, const void *b) {

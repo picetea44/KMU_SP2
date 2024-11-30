@@ -11,18 +11,18 @@
 #define _INTERVAL_SERIAL  20 // serial interval (unit: ms)
 
 // EMA filter configuration for the IR distance sensor
-#define _EMA_ALPHA 0.3    // EMA weight of new sample (range: 0 to 1)
+#define _EMA_ALPHA 0.7    // EMA weight of new sample (range: 0 to 1)
                           // Setting EMA to 1 effectively disables EMA filter.
 
 // Servo adjustment - Set _DUTY_MAX, _NEU, _MIN with your own numbers
-#define _DUTY_MAX 2000 // 2000
-#define _DUTY_NEU 1680 // 1500
-#define _DUTY_MIN 935 // 1000
+#define _DUTY_MAX 2400 // 2000
+#define _DUTY_NEU 1475 // 1500
+#define _DUTY_MIN 550 // 1000
 
-#define _SERVO_ANGLE_DIFF  80
+#define _SERVO_ANGLE_DIFF  168
 #define _SERVO_SPEED       1000  // servo speed
 
-#define _BANGBANG_RANGE    240  // duty up and down for bangbang control
+#define _BANGBANG_RANGE    400  // duty up and down for bangbang control
 
 // Target Distance
 #define _DIST_TARGET    175 // Center of the rail (unit:mm)
@@ -84,7 +84,7 @@ void loop()
     event_dist = false;
 
     // get a distance reading from the distance sensor
-    dist_filtered = volt_to_distance(ir_sensor_filtered(10, 0.5, 0));
+    dist_filtered = volt_to_distance(ir_sensor_filtered(5, 0.5, 0));
     dist_ema = _EMA_ALPHA * dist_filtered + (1.0 - _EMA_ALPHA) * dist_ema;
 
     // bang bang control
@@ -136,7 +136,7 @@ float volt_to_distance(int x)
 {
   // Replace line into your own equation
   // return (6762.0 / (a_value - 9) - 4.0) * 10.0; 
-  return 774 + -3.57*x + 5.9E-03*x*x + -3.46E-06*x*x*x;
+  return 877 + -4.29*x + 7.48E-03*x*x + -4.55E-06*x*x*x;
 }
 
 int compare(const void *a, const void *b) {

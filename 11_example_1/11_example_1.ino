@@ -44,7 +44,7 @@ void setup() {
   digitalWrite(PIN_TRIG, LOW);  // turn-off Sonar 
 
   myservo.attach(PIN_SERVO); 
-  myservo.writeMicroseconds(2500);
+  myservo.writeMicroseconds(1475);
   while(1){}
   // initialize USS related variables
   dist_prev = _DIST_MIN; // raw distance output from USS (unit: mm)

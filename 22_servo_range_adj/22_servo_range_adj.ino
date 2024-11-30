@@ -9,9 +9,9 @@
 #define _INTERVAL_SERIAL  20 // serial interval (unit: ms)
 
 // Servo adjustment
-#define _DUTY_NEU 1500
-#define _DUTY_MAX 2500
-#define _DUTY_MIN 500
+#define _DUTY_NEU 1475
+#define _DUTY_MAX 2400
+#define _DUTY_MIN 550
 
 #define _ADJ_RANGE 1000
 
