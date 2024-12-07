@@ -16,8 +16,8 @@
 
 // Servo adjustment - Set _DUTY_MAX, _NEU, _MIN with your own numbers
 #define _DUTY_MAX 2400 // between 2385-2400 
-#define _DUTY_NEU 1475
-#define _DUTY_MIN 550 
+#define _DUTY_NEU 1565
+#define _DUTY_MIN 540 
 
 #define _SERVO_ANGLE_DIFF  165  // between 168-169
 #define _SERVO_SPEED       300  // servo speed 
@@ -26,7 +26,7 @@
 #define _DIST_TARGET    155 // Center of the rail (unit:mm)
 
 // PID parameters
-#define _KP 4.2  // proportional gain
+#define _KP 4.6  // proportional gain
 #define _KD 250  // derivative gain
 //#define _KI 0.0   // integral gain
 
@@ -144,6 +144,7 @@ void loop() {
       Serial.print(",duty_current:"); Serial.print(duty_current);
     }
     Serial.print("MIN:0,MAX:300,TARGET:155,TG_LO:128,TG_HI:182,DIST:"); 
+    
     Serial.println(dist_ema);
   }
 }
@@ -151,8 +152,8 @@ void loop() {
 float volt_to_distance(int x)
 {
   // Replace next line into your own equation
-  return 701 + -3.18*x + 5.13E-03*x*x + -2.93E-06*x*x*x; 
-  //return 877 + -4.29*x + 7.48E-03*x*x + -4.55E-06*x*x*x;
+  //return 701 + -3.18*x + 5.13E-03*x*x + -2.93E-06*x*x*x; 
+  return 877 + -4.29*x + 7.48E-03*x*x + -4.55E-06*x*x*x;
 }
 
 int compare(const void *a, const void *b) {
