@@ -5,10 +5,14 @@
 #define PIN_SERVO 10
 #define PIN_IR    A0
 
+// Debug mode
+#define MODE   2  // 0: serial plotter, 1: serial monitor, 2: evaluation
+
 // Event interval parameters
 #define _INTERVAL_DIST    20    // distance sensor interval (unit: ms)
-//////////////// DO NOT modify below section!! //////////////////////////    
 #define _INTERVAL_SERVO   20     // servo interval (unit: ms)
+
+//////////////// DO NOT modify below section!! //////////////////////////    
 #define _INTERVAL_SERIAL  100    // serial interval (unit: ms)
 #define _INTERVAL_MOVE    10000  // Target move interval (unit: ms)
 /////////////////////////////////////////////////////////////////////////
@@ -19,16 +23,16 @@
 
 // Servo adjustment - Set _DUTY_MAX, _NEU, _MIN with your own numbers
 #define _DUTY_MAX 2400 // 2000
-#define _DUTY_NEU 1475 // 1500
-#define _DUTY_MIN 540 // 1000
+#define _DUTY_NEU 1495 // 1500
+#define _DUTY_MIN 550 // 1000
 
 #define _SERVO_ANGLE_DIFF  165  // Replace with |D - E| degree
-#define _SERVO_SPEED       1000  // servo speed 
+#define _SERVO_SPEED       300  // servo speed 
 
 // PID parameters
 #define _KP 4.6   // proportional gain
 #define _KD 250   // derivative gain
-#define _KI 0.7   // integral gain
+#define _KI 0.000001   // integral gain
 
 // global variables
 
@@ -95,7 +99,7 @@ void loop() {
   if (time_current >= (last_sampling_time_move + _INTERVAL_MOVE)) {
         last_sampling_time_move += _INTERVAL_MOVE;
         dist_target = 310 - dist_target;
-        if (++toggle_cnt == 5) {
+        if (MODE == 2 && ++toggle_cnt == 5) {
           Serial.println("--------------------------------------------------");
           Serial.print("ERR_cnt:");
           Serial.print(error_cnt);
@@ -137,7 +141,7 @@ void loop() {
     
     pterm = _KP * error_current;
     dterm = _KD * (error_current - error_prev);
-    iterm += (float) _KI * error_current;
+    iterm += _KI * error_current;
 
     control = pterm + dterm + iterm;
     error_prev = error_current;
@@ -168,17 +172,18 @@ void loop() {
     // update servo position
     myservo.writeMicroseconds(duty_current);    
   }
-  
+
+  //////////////// DO NOT modify below section!! /////////////////////////        
   if (event_serial) {
     event_serial = false;
     
-    if (0) { // use for debugging with serial plotter
+    if (MODE == 0) { // use for debugging with serial plotter
       Serial.print("MIN:0,MAX:310,TARGET:"); Serial.print(dist_target);
       Serial.print(",DIST:");                Serial.print(dist_ema);
       Serial.print(",ERR_ave(10X):");        Serial.println(error_sum / (float) error_cnt * 10);
     }
 
-    if (0) { // use for debugging with serial monitor
+    if (MODE == 1) { // use for debugging with serial monitor
       Serial.print("MIN:0,MAX:310,TARGET:"); Serial.print(dist_target);
       Serial.print(",DIST:");    Serial.print(dist_ema);
       Serial.print(",pterm:");   Serial.print(pterm);
@@ -191,7 +196,7 @@ void loop() {
       Serial.print(",ERR_ave:"); Serial.println(error_sum / (float) error_cnt);
     }
 
-    if (1) { // use for evaluation
+    if (MODE == 2) { // use for evaluation
       Serial.print("ERR_cnt:");
       Serial.print(error_cnt);
       Serial.print(",ERR_current:");
@@ -203,6 +208,7 @@ void loop() {
     }
   }
 }
+/////////////////////////////////////////////////////////////////////////
 
 float volt_to_distance(int x)
 {
